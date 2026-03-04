@@ -1,38 +1,65 @@
-import styles from './Task.module.css'
+import styles from "./Task.module.css";
+import { useState } from "react";
+import EditDescription from "./EditDescription";
 
 const Task = ({
   description,
   completed,
   deleteTask,
   updateCompleted,
+  updateDescription,
   index,
 }) => {
+  const [editing, setEditing] = useState(false);
+
+  const onEdit = (index, newDescription) => {
+    updateDescription(index, newDescription);
+    setEditing(false);
+  };
+
   return (
     <div
-      className={styles['task-container']}
+      className={styles["task-container"]}
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        padding: '2px',
-        gap: '10px',
+        display: "flex",
+        alignItems: "center",
+        padding: "2px",
+        gap: "10px",
       }}
     >
       <input
-        type='checkbox'
-        id='task-checkbox'
+        type="checkbox"
+        id="task-checkbox"
         checked={completed}
         onChange={(e) => updateCompleted(index, e.target.checked)}
       />
-      <span
-        style={{
-          textDecoration: completed ? 'line-through' : 'none',
+      {editing ? (
+        <EditDescription
+          index={index}
+          description={description}
+          onEdit={onEdit}
+          onCancel={() => setEditing(false)}
+        />
+      ) : (
+        <span
+          style={{
+            textDecoration: completed ? "line-through" : "none",
+          }}
+        >
+          {description}
+        </span>
+      )}
+      {!completed && <button onClick={() => setEditing(true)}>Edit</button>}
+      <button
+        onClick={() => {
+          deleteTask(index);
+          setEditing(false);
         }}
       >
-        {description}
-      </span>
-      <button onClick={() => deleteTask(index)}>Delete</button>
+        Delete
+      </button>
     </div>
-  )
-}
+  );
+};
 
-export default Task
+export default Task;
